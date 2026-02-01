@@ -42,14 +42,22 @@ This section is adapted from [SteamVR Tracking without an HMD](http://help.triad
 	1. Save this default.vrsettings file and close
 	1. Once successfully set up SteamVR, you can now hit “Play” to start SteamVR. If SteamVR is running, close and restart it. you will see that it is now possible to connect a tracker or controller without the HMD.
 
-2. In order for the program to run, you should have Python 3.6 running on your computer.
-
-3. Once Python 3.6 is installed, use pip to install [pyopenvr](https://github.com/cmbruns/pyopenvr) and [pyquaternion](http://kieranwynn.github.io/pyquaternion/) with the following commands (or skip this step and let `pip install -e .` handle the dependencies for you):
+2. Use Python 3.10 via a conda env (recommended):
 
 	```
-	pip install openvr
-	pip install pyquaternion
-	pip install matplotlib
+	conda create -y -n vive_tracker_py310 python=3.10
+	conda activate vive_tracker_py310
+	```
+
+3. Install dependencies (openvr, pyquaternion, matplotlib, numpy, **mujoco**) with:
+
+	```
+	pip install -e .
+	```
+
+	If you prefer manual installs:
+	```
+	pip install openvr pyquaternion matplotlib numpy mujoco
 	```
 
 4. Now you have installed all the required prerequisites for this program. To have the program running on local environments, simply clone this GitHub repository to a local folder, and you are ready to run the program.

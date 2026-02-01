@@ -19,6 +19,7 @@ setup(
         "pyquaternion",
         "matplotlib",
         "numpy",
+        "mujoco>=2.3",
     ],
     keywords=["steamvr", "vive", "openvr", "tracking", "robotics"],
     entry_points={

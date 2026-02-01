@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mujoco model="handright9253">
+  <default>
+    <default class="robot">
+      <default class="motor">
+        <joint/>
+        <motor/>
+      </default>
+      <default class="visual">
+        <geom material="visualgeom" contype="0" conaffinity="0" group="2"/>
+      </default>
+      <default class="collision">
+        <geom material="collision_material" condim="3" contype="0" conaffinity="1" priority="1" group="1" solref="0.005 1" solimp="0.99 0.999 1e-05" friction="1 0.01 0.01"/>
+      </default>
+    </default>
+  </default>
+
+  <compiler angle="radian"/>
+
+  <asset>
+    <material name="material_a" rgba="1 1 1 1"/>
+    <material name="default_material" rgba="0.7 0.7 0.7 1"/>
+    <material name="collision_material" rgba="1.0 0.28 0.1 0.9"/>
+    <mesh name="base_link.STL" file="./meshes/base_link.STL"/>
+    <mesh name="Link1.STL" file="./meshes/Link1.STL"/>
+    <mesh name="Link2.STL" file="./meshes/Link2.STL"/>
+    <mesh name="Link3.STL" file="./meshes/Link3.STL"/>
+    <mesh name="Link4.STL" file="./meshes/Link4.STL"/>
+    <mesh name="Link5.STL" file="./meshes/Link5.STL"/>
+    <mesh name="Link11.STL" file="./meshes/Link11.STL"/>
+    <mesh name="Link12.STL" file="./meshes/Link12.STL"/>
+    <mesh name="Link13.STL" file="./meshes/Link13.STL"/>
+    <mesh name="Link14.STL" file="./meshes/Link14.STL"/>
+    <mesh name="Link15.STL" file="./meshes/Link15.STL"/>
+    <mesh name="Link21.STL" file="./meshes/Link21.STL"/>
+    <mesh name="Link22.STL" file="./meshes/Link22.STL"/>
+    <mesh name="Link23.STL" file="./meshes/Link23.STL"/>
+    <mesh name="Link24.STL" file="./meshes/Link24.STL"/>
+    <mesh name="Link25.STL" file="./meshes/Link25.STL"/>
+    <mesh name="Link31.STL" file="./meshes/Link31.STL"/>
+    <mesh name="Link32.STL" file="./meshes/Link32.STL"/>
+    <mesh name="Link33.STL" file="./meshes/Link33.STL"/>
+    <mesh name="Link34.STL" file="./meshes/Link34.STL"/>
+    <mesh name="Link35.STL" file="./meshes/Link35.STL"/>
+    <mesh name="Link41.STL" file="./meshes/Link41.STL"/>
+    <mesh name="Link42.STL" file="./meshes/Link42.STL"/>
+    <mesh name="Link43.STL" file="./meshes/Link43.STL"/>
+    <mesh name="Link44.STL" file="./meshes/Link44.STL"/>
+    <mesh name="Link45.STL" file="./meshes/Link45.STL"/>
+    <mesh name="Link46.STL" file="./meshes/Link46.STL"/>
+    <mesh name="Link47.STL" file="./meshes/Link47.STL"/>
+    <mesh name="Link48.STL" file="./meshes/Link48.STL"/>
+    <mesh name="Link49.STL" file="./meshes/Link49.STL"/>
+    <mesh name="Link50.STL" file="./meshes/Link50.STL"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 0" rgba="0.8 0.9 0.8 1"/>
+    <body name="float_base" pos="0.00000000 0.00000000 -0.50000000" quat="1 0 0 0" childclass="robot">
+      <freejoint name="floating_base"/>
+      <body name="base_link" pos="0.5 0.5 0.5" quat="0.707106790659974 -0.707106771713121 0.0 0.0">
+        <inertial pos="-0.0025264 -0.066047 0.0019598" quat="1.0 0.0 0.0 0.0" mass="0.14143" diaginertia="0.00012281 8.3831e-05 7.6663e-05"/>
+        <geom name="base_link_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="base_link.STL" class="collision"/>
+        <geom name="base_link_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="base_link.STL" class="visual"/>
+        <body name="Link1" pos="0.00629 -0.056236 -0.02346" quat="0.9998476915353435 0.017452613885739623 0.0 0.0">
+          <joint name="joint01" type="hinge" ref="0.0" class="motor" range="-0.05 0.05" axis="0 0 -1"/>
+          <inertial pos="-0.0017642 -0.028543 -2.2385E-07" quat="1.0 0.0 0.0 0.0" mass="0.0069755" diaginertia="1.9938e-06 1.4791e-07 2.0272e-06"/>
+          <geom name="Link1_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link1.STL" class="collision"/>
+          <geom name="Link1_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link1.STL" class="visual"/>
+          <body name="Link2" pos="-0.0010813 -0.050714 0" quat="0.6827239075236659 -0.6786473056865662 0.19859356007191628 0.1840828576428113">
+            <joint name="joint12" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+            <inertial pos="-1.6261E-10 2.3732E-10 -0.011292" quat="1.0 0.0 0.0 0.0" mass="0.00030666" diaginertia="1.4458e-08 1.4474e-08 6.5358e-10"/>
+            <geom name="Link2_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link2.STL" class="collision"/>
+            <geom name="Link2_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link2.STL" class="visual"/>
+            <body name="Link3" pos="0.00046892 0.00076819 -0.0244" quat="0.18409668843757346 -0.1986087095713995 -0.6786430701536872 0.6827199814866122">
+              <joint name="joint23" type="hinge" ref="0.0" class="motor" range="0 1.7" axis="0 0 -1"/>
+              <inertial pos="0.0031774 0.017383 0.00090008" quat="1.0 0.0 0.0 0.0" mass="0.0042403" diaginertia="6.6232e-07 2.1146e-07 6.9398e-07"/>
+              <geom name="Link3_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link3.STL" class="collision"/>
+              <geom name="Link3_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link3.STL" class="visual"/>
+              <body name="Link4" pos="0.0070171 0.037468 -0.00215" quat="1.0 0.0 0.0 0.0">
+                <joint name="joint34" type="hinge" ref="0.0" class="motor" range="-1.7 0" axis="0 0 1"/>
+                <inertial pos="-0.0019697 0.019589 0.00305" quat="1.0 0.0 0.0 0.0" mass="0.0045683" diaginertia="7.6111e-07 9.6076e-08 7.8179e-07"/>
+                <geom name="Link4_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link4.STL" class="collision"/>
+                <geom name="Link4_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link4.STL" class="visual"/>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="Link11" pos="0.00629 -0.05655 -0.00695" quat="1.0 0.0 0.0 0.0">
+          <joint name="joint011" type="hinge" ref="0.0" class="motor" range="-0.05 0.05" axis="0 0 -1"/>
+          <inertial pos="-0.0017767 -0.028542 -2.303E-07" quat="1.0 0.0 0.0 0.0" mass="0.0069755" diaginertia="1.9937e-06 1.4796e-07 2.0272e-06"/>
+          <geom name="Link11_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link11.STL" class="collision"/>
+          <geom name="Link11_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link11.STL" class="visual"/>
+          <body name="Link12" pos="-0.0011031 -0.050343 -0.018279" quat="0.5139601696179364 -0.48563863105052296 0.49670376156253093 0.5032747135782882">
+            <joint name="joint1112" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+            <inertial pos="-0.018674 6.5223E-06 -0.010992" quat="1.0 0.0 0.0 0.0" mass="0.00030666" diaginertia="1.4466e-08 1.4449e-08 6.7042e-10"/>
+            <geom name="Link12_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link12.STL" class="collision"/>
+            <geom name="Link12_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link12.STL" class="visual"/>
+            <body name="Link13" pos="-0.018232 0 -0.024124" quat="0.5032728256937752 -0.49670376156253093 -0.48563863105052296 0.5139620182457154">
+              <joint name="joint1213" type="hinge" ref="0.0" class="motor" range="0 1.7" axis="0 0 -1"/>
+              <inertial pos="0.0030737 0.017402 0.00090013" quat="1.0 0.0 0.0 0.0" mass="0.0042403" diaginertia="6.6211e-07 2.1167e-07 6.9397e-07"/>
+              <geom name="Link13_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link13.STL" class="collision"/>
+              <geom name="Link13_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link13.STL" class="visual"/>
+              <body name="Link14" pos="0.0067937 0.037509 -0.00215" quat="1.0 0.0 0.0 0.0">
+                <joint name="joint1314" type="hinge" ref="0.0" class="motor" range="0 1.7" axis="0 0 -1"/>
+                <inertial pos="-0.001921 0.020796 0.00305" quat="1.0 0.0 0.0 0.0" mass="0.0050396" diaginertia="9.5822e-07 1.0646e-07 9.8384e-07"/>
+                <geom name="Link14_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link14.STL" class="collision"/>
+                <geom name="Link14_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link14.STL" class="visual"/>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="Link21" pos="0.00629 -0.056157 0.0080633" quat="0.9996573233730004 -0.026177009506979564 0.0 0.0">
+          <joint name="joint021" type="hinge" ref="0.0" class="motor" range="-0.05 0.05" axis="0 0 1"/>
+          <inertial pos="-0.0017767 -0.028542 -2.2887E-07" quat="1.0 0.0 0.0 0.0" mass="0.0069755" diaginertia="1.9937e-06 1.4796e-07 2.0272e-06"/>
+          <geom name="Link21_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link21.STL" class="collision"/>
+          <geom name="Link21_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link21.STL" class="visual"/>
+          <body name="Link22" pos="-0.0011031 -0.050688 0" quat="0.5051481262037367 -0.49424420832909 0.5056902852009985 0.49479831101099914">
+            <joint name="joint2122" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+            <inertial pos="7.7552E-11 1.8671E-10 -0.011292" quat="1.0 0.0 0.0 0.0" mass="0.00030666" diaginertia="1.4483e-08 1.4449e-08 6.5358e-10"/>
+            <geom name="Link22_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link22.STL" class="collision"/>
+            <geom name="Link22_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link22.STL" class="visual"/>
+            <body name="Link23" pos="0.0009 0 -0.0244" quat="0.4948070635347001 -0.5056817214570638 -0.49425482572460105 0.5051377373631194">
+              <joint name="joint2223" type="hinge" ref="0.0" class="motor" range="0 1.7" axis="0 0 -1"/>
+              <inertial pos="0.0030737 0.017402 0.00090015" quat="1.0 0.0 0.0 0.0" mass="0.0042403" diaginertia="6.6211e-07 2.1167e-07 6.9397e-07"/>
+              <geom name="Link23_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link23.STL" class="collision"/>
+              <geom name="Link23_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link23.STL" class="visual"/>
+              <body name="Link24" pos="0.0067937 0.037509 -0.00215" quat="1.0 0.0 0.0 0.0">
+                <joint name="joint2324" type="hinge" ref="0.0" class="motor" range="-1.7 0" axis="0 0 1"/>
+                <inertial pos="-0.0021753 0.019567 0.00305" quat="1.0 0.0 0.0 0.0" mass="0.0045683" diaginertia="7.6286e-07 9.431e-08 7.8177e-07"/>
+                <geom name="Link24_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link24.STL" class="collision"/>
+                <geom name="Link24_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link24.STL" class="visual"/>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="Link31" pos="0.00629 -0.054979 0.023035" quat="0.998629528346543 -0.05233607851531355 0.0 0.0">
+          <joint name="joint031" type="hinge" ref="0.0" class="motor" range="-0.05 0.05" axis="0 0 1"/>
+          <inertial pos="-0.0017767 -0.028542 -2.2872E-07" quat="1.0 0.0 0.0 0.0" mass="0.0069755" diaginertia="1.9937e-06 1.4796e-07 2.0272e-06"/>
+          <geom name="Link31_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link31.STL" class="collision"/>
+          <geom name="Link31_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link31.STL" class="visual"/>
+          <body name="Link32" pos="-0.0011031 -0.050688 0" quat="0.5048511551937825 -0.49394070630271875 0.5059867417972601 0.49510130971556443">
+            <joint name="joint3132" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+            <inertial pos="2.6333E-10 5.3616E-10 -0.011292" quat="1.0 0.0 0.0 0.0" mass="0.00030666" diaginertia="1.4483e-08 1.4449e-08 6.5358e-10"/>
+            <geom name="Link32_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link32.STL" class="collision"/>
+            <geom name="Link32_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link32.STL" class="visual"/>
+            <body name="Link33" pos="0.0009 0 -0.0244" quat="0.49511005709366424 -0.5059781833119983 -0.4939513277440654 0.5048407622180217">
+              <joint name="joint3233" type="hinge" ref="0.0" class="motor" range="-1.7 0" axis="0 0 1"/>
+              <inertial pos="0.0030737 0.017402 0.00090014" quat="1.0 0.0 0.0 0.0" mass="0.0042403" diaginertia="6.6211e-07 2.1167e-07 6.9398e-07"/>
+              <geom name="Link33_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link33.STL" class="collision"/>
+              <geom name="Link33_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link33.STL" class="visual"/>
+              <body name="Link34" pos="0.0067937 0.037509 -0.00215" quat="1.0 0.0 0.0 0.0">
+                <joint name="joint3334" type="hinge" ref="0.0" class="motor" range="0 1.7" axis="0 0 -1"/>
+                <inertial pos="-0.0024748 0.016203 0.0030531" quat="1.0 0.0 0.0 0.0" mass="0.0035996" diaginertia="4.3913e-07 7.0247e-08 4.4867e-07"/>
+                <geom name="Link34_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link34.STL" class="collision"/>
+                <geom name="Link34_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link34.STL" class="visual"/>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="Link41" pos="-0.01096 -0.06025 0.02985" quat="-0.003167036833808464 -0.0031618305657379942 0.7071010107166166 -0.7070983901471604">
+          <joint name="joint041" type="hinge" ref="0.0" class="motor" range="-0.02 0.02" axis="0 0 -1"/>
+          <inertial pos="3.252E-10 0.022007 0.0065979" quat="1.0 0.0 0.0 0.0" mass="0.0092961" diaginertia="1.5208e-06 5.558e-07 1.1427e-06"/>
+          <geom name="Link41_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link41.STL" class="collision"/>
+          <geom name="Link41_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link41.STL" class="visual"/>
+          <body name="Link42" pos="0 0.027687 0" quat="0.7071054825112363 0.7071080798594735 0.0 0.0">
+            <joint name="joint4142" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+            <inertial pos="5.0532E-09 -1.4449E-09 -0.011425" quat="1.0 0.0 0.0 0.0" mass="0.00016153" diaginertia="7.1494e-09 7.177e-09 2.337e-10"/>
+            <geom name="Link42_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link42.STL" class="collision"/>
+            <geom name="Link42_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link42.STL" class="visual"/>
+            <body name="Link43" pos="0 -0.0026 -0.01955" quat="0.5022430933308293 -0.5022449381761112 -0.4977449533635958 -0.4977467816862566">
+              <joint name="joint4243" type="hinge" ref="0.0" class="motor" range="0 1.2" axis="0 0 -1"/>
+              <inertial pos="-0.0078715 0.0065154 0.00388" quat="1.0 0.0 0.0 0.0" mass="0.0018869" diaginertia="5.816e-08 7.9161e-08 6.7433e-08"/>
+              <geom name="Link43_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link43.STL" class="collision"/>
+              <geom name="Link43_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link43.STL" class="visual"/>
+              <body name="Link44" pos="-0.012782 0.013348 0.0022" quat="0.09968429730547897 0.09968466346702105 0.7000462873782122 0.7000437159693395">
+                <joint name="joint4344" type="hinge" ref="0.0" class="motor" range="-0.5 0" axis="0 0 -1"/>
+                <inertial pos="0.021932 0.012785 -0.0047886" quat="1.0 0.0 0.0 0.0" mass="0.0066075" diaginertia="1.5687e-06 1.7353e-06 2.786e-06"/>
+                <geom name="Link44_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link44.STL" class="collision"/>
+                <geom name="Link44_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link44.STL" class="visual"/>
+                <body name="Link45" pos="0.0083049 -0.0034513 -0.00475" quat="0.07445459910383252 -0.9569662115418335 -0.2796405268460717 0.0217568008863797">
+                <!--  <joint name="joint4445" type="hinge" ref="0.0" class="motor" range="0 0.4" axis="0 -0.15464 -0.98797"/>-->
+                  <inertial pos="0.02194 -0.0065438 0.0010242" quat="1.0 0.0 0.0 0.0" mass="0.0092256" diaginertia="5.5097e-07 1.1405e-06 1.4973e-06"/>
+                  <geom name="Link45_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link45.STL" class="collision"/>
+                  <geom name="Link45_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link45.STL" class="visual"/>
+                  <body name="Link46" pos="0.02428 0 0" quat="0.05484779690205832 0.704976194706182 -0.05485297594637062 -0.7049761947061819">
+                    <joint name="joint4546" type="slide" ref="0.0" class="motor" range="0 0.01" axis="0 0 -1"/>
+                    <inertial pos="-5.7515E-13 -6.7503E-13 -0.01215" quat="1.0 0.0 0.0 0.0" mass="0.00017549" diaginertia="8.3803e-09 8.3341e-09 2.4208e-10"/>
+                    <geom name="Link46_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link46.STL" class="collision"/>
+                    <geom name="Link46_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link46.STL" class="visual"/>
+                    <body name="Link47" pos="0.001 0 -0.0223" quat="0.6787218975567739 -0.19833203689450224 -0.678723354585274 0.1983320368945023">
+                      <joint name="joint4647" type="hinge" ref="0.0" class="motor" range="0 0.8" axis="0 0 -1"/>
+                      <inertial pos="-0.0060688 0.011295 0.00099972" quat="1.0 0.0 0.0 0.0" mass="0.0037847" diaginertia="3.6981e-07 3.2394e-07 4.6531e-07"/>
+                      <geom name="Link47_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link47.STL" class="collision"/>
+                      <geom name="Link47_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link47.STL" class="visual"/>
+                      <body name="Link48" pos="-0.016763 0.023079 -0.00255" quat="1.0 0.0 0.0 0.0">
+                        <joint name="joint4748" type="hinge" ref="0.0" class="motor" range="0 1.2" axis="0 0 -1"/>
+                        <inertial pos="-0.0092888 0.0049529 0.0035533" quat="1.0 0.0 0.0 0.0" mass="0.0033441" diaginertia="1.3632e-07 1.4052e-07 2.0026e-07"/>
+                        <geom name="Link48_collision" pos="0 0 0" quat="1.0 0.0 0.0 0.0" type="mesh" mesh="Link48.STL" class="collision"/>
+                        <geom name="Link48_visual" pos="0 0 0" quat="1.0 0.0 0.0 0.0" material="" type="mesh" mesh="Link48.STL" class="visual"/>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+                <body name="Link49" pos="0.036109 0.035336 -0.0033" quat="1.3492435731251315e-11 -3.6732051033217936e-06 -0.9999999999865075 3.6732051033217936e-06">
+                  <joint name="joint4449" type="hinge" ref="0.0" class="motor" range="0 1" axis="0 0 -1"/>
+                  <inertial pos="-0.017737 0.0022319 0.00145" quat="1.0 0.0 0.0 0.0" mass="0.00021109" diaginertia="7.9738e-10 2.5464e-08 2.5965e-08"/>
+                </body>
+              </body>
+              <body name="Link50" pos="-0.010085 0.014283 0.010893" quat="0.09968429730547897 0.09968466346702105 0.7000462873782122 0.7000437159693395">
+                <joint name="joint4350" type="hinge" ref="0.0" class="motor" range="-1 0" axis="0 0 -1"/>
+                <inertial pos="0.023451 0.0093386 -0.0005" quat="1.0 0.0 0.0 0.0" mass="0.00031643" diaginertia="1.1104e-08 6.5483e-08 7.6534e-08"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <site name="world_site" pos="0 0 0" quat="1 0 0 0"/>
+      <camera name="front_camera" mode="track" fovy="90.0" quat="4.329780281177467e-17 4.329780281177466e-17 0.7071067811865475 0.7071067811865476" pos="0.0 2.0 0.5"/>
+      <camera name="side_camera" mode="track" fovy="90.0" quat="-0.5 -0.4999999999999999 0.5 0.5000000000000001" pos="-2.0 0.0 0.5"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="joint23_ctrl" joint="joint23" class="motor"/>
+    <motor name="joint34_ctrl" joint="joint34" class="motor"/>
+    
+    <motor name="joint1213_ctrl" joint="joint1213" class="motor"/>
+    <motor name="joint1314_ctrl" joint="joint1314" class="motor"/>
+    
+    <motor name="joint2223_ctrl" joint="joint2223" class="motor"/>
+    <motor name="joint2324_ctrl" joint="joint2324" class="motor"/>
+    
+    <motor name="joint3233_ctrl" joint="joint3233" class="motor"/>
+    <motor name="joint3334_ctrl" joint="joint3334" class="motor"/>
+    
+    <motor name="joint4243_ctrl" joint="joint4243" class="motor"/>
+    <motor name="joint4344_ctrl" joint="joint4344" class="motor"/>
+    <!--<motor name="joint4445_ctrl" joint="joint4445" class="motor" />-->
+    <motor name="joint4647_ctrl" joint="joint4647" class="motor"/>
+    <motor name="joint4748_ctrl" joint="joint4748" class="motor"/>
+
+  </actuator>
+
+  <contact>
+    <exclude body1="base_link" body2="Link1"/>
+    <exclude body1="Link1" body2="Link2"/>
+    <exclude body1="Link2" body2="Link3"/>
+    <exclude body1="Link3" body2="Link4"/>
+    <exclude body1="base_link" body2="Link11"/>
+    <exclude body1="Link11" body2="Link12"/>
+    <exclude body1="Link12" body2="Link13"/>
+    <exclude body1="Link13" body2="Link14"/>
+    <exclude body1="base_link" body2="Link21"/>
+    <exclude body1="Link21" body2="Link22"/>
+    <exclude body1="Link22" body2="Link23"/>
+    <exclude body1="Link23" body2="Link24"/>
+    <exclude body1="base_link" body2="Link31"/>
+    <exclude body1="Link31" body2="Link32"/>
+    <exclude body1="Link32" body2="Link33"/>
+    <exclude body1="Link33" body2="Link34"/>
+    <exclude body1="base_link" body2="Link41"/>
+    <exclude body1="Link41" body2="Link42"/>
+    <exclude body1="Link42" body2="Link43"/>
+    <exclude body1="Link43" body2="Link44"/>
+    <exclude body1="Link44" body2="Link45"/>
+    <exclude body1="Link45" body2="Link46"/>
+    <exclude body1="Link46" body2="Link47"/>
+    <exclude body1="Link47" body2="Link48"/>
+  </contact>
+
+  <sensor>
+    <framepos name="world_site_pos" objtype="site" objname="world_site"/>
+    <framequat name="world_site_quat" objtype="site" objname="world_site"/>
+    <framelinvel name="world_site_linvel" objtype="site" objname="world_site"/>
+    <frameangvel name="world_site_angvel" objtype="site" objname="world_site"/>
+    <velocimeter name="world_site_vel" site="world_site"/>
+  </sensor>
+</mujoco>
