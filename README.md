@@ -44,7 +44,7 @@ This section is adapted from [SteamVR Tracking without an HMD](http://help.triad
 
 2. In order for the program to run, you should have Python 3.6 running on your computer.
 
-3. Once Python 3.6 is installed, use pip to install [pyopenvr](https://github.com/cmbruns/pyopenvr) and [pyquaternion](http://kieranwynn.github.io/pyquaternion/) with the following commands:
+3. Once Python 3.6 is installed, use pip to install [pyopenvr](https://github.com/cmbruns/pyopenvr) and [pyquaternion](http://kieranwynn.github.io/pyquaternion/) with the following commands (or skip this step and let `pip install -e .` handle the dependencies for you):
 
 	```
 	pip install openvr
@@ -58,12 +58,12 @@ This section is adapted from [SteamVR Tracking without an HMD](http://help.triad
 
 Before running the program, you first need to run SteamVR, then connect the VIVE tracker to your computer(either using the USB cable, or wirelessly using the dongle and dongle cradle). Hold the button on the tracker for one second to turn on the tracker. Make sure that there is nothing between the base station and the tracker, so that the IR light sent by the base station could be detected by the tracker. When everything is connected, you will see that the base station symbol and the tracker symbol of steamVR turn green(without flashing). The light on the tracker should also turn green when it is tracking. Note that the “Not Ready” text is normal.
 
-### Examine the real-time pose information of tracker using tracker_test.py
+### Examine the real-time pose information of tracker using `tests/tracker_test.py`
 
-Once both the tracker and the base station are connected, you could run the following command to check the real-time pose data of the tracker:
+Once both the tracker and the base station are connected, you can run the following command from the repo root to check the real-time pose data of the tracker:
 
 ```
-python3 tracker_test.py
+python tests/tracker_test.py
 ```
 
 As the script executes, you will see numbers updating at 250Hz. The first three numbers are the Cartesian coordinates of the tracker in the order of X, Y, Z. The next four numbers are the quaternions of the tracker in the order of w, x, y, z.
@@ -72,13 +72,29 @@ The coordinates of the VR world are set up like this: when facing towards the ba
 
 ### Record a session of pose movement and send it to robot arm
 
-#### Recording data on the windows PC using record_track.py
+#### Recording data on the windows PC using `utils/record_track.py`
 
 In order to record a session of pose movement, run the following command after both base station and tracker are connected:
 
 ```
-python3 record_track.py [duration = 30] [interval = 0.05]
+python utils/record_track.py [duration = 30] [interval = 0.05]
 ```
+
+## Installing locally
+
+Recommended clean setup (inside a virtualenv):
+
+```
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
+pip install --upgrade pip setuptools wheel
+pip install -e .
+```
+
+This exposes two console scripts:
+
+- `tracker-test` — prints live xyz + quaternion for `tracker_1`.
+- `tcp-visualizer` — opens the 3D matplotlib viewer for tracker position.
 
 The program takes two optional arguments, the first argument is the duration of motion you want to record in seconds. The default value for duration is 30 seconds. The second argument is the time interval between every pose information in seconds. The shorter the interval, the more accurate the record data are. The default value for interval is 0.05 second.
 
