@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import triad_openvr
+import device.triad_openvr as triad_openvr
 import time
 import sys
 import numpy as np
