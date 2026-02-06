@@ -45,19 +45,14 @@ This section is adapted from [SteamVR Tracking without an HMD](http://help.triad
 2. Use Python 3.10 via a conda env (recommended):
 
 	```
-	conda create -y -n vive_tracker_py310 python=3.10
-	conda activate vive_tracker_py310
+	conda create -y -n vive_tracker python=3.10
+	conda activate vive_tracker
 	```
 
 3. Install dependencies (openvr, pyquaternion, matplotlib, numpy, **mujoco**) with:
 
 	```
 	pip install -e .
-	```
-
-	If you prefer manual installs:
-	```
-	pip install openvr pyquaternion matplotlib numpy mujoco
 	```
 
 4. Now you have installed all the required prerequisites for this program. To have the program running on local environments, simply clone this GitHub repository to a local folder, and you are ready to run the program.
@@ -108,14 +103,13 @@ Follow the prompts in order (return to pelvis origin each time):
 2) Return to pelvis, then move +X (right) → press Enter  
 3) Return to pelvis, then move +Y (forward) → press Enter  
 4) Return to pelvis, then move +Z (up) → press Enter  
-5) Return to pelvis, rotate +X (roll, right-hand rule) → press Enter  
-6) Return to pelvis, rotate +Z (yaw, right-hand rule) → press Enter
+5) Return to pelvis, rotate +X (roll, right-hand rule) → press Enter  # roll backwards
+6) Return to pelvis, rotate +Z (yaw, right-hand rule) → press Enter # roll anti-clockwise
 
 This saves `tests/tracker_calibration.json`. Subsequent runs apply it automatically.
 Steps 5–6 let the script auto-detect rotation sign flips and store them in the calibration.
-Use `--no-calib` to bypass the transform, or `--no-calib-rot` to bypass rotation alignment.
 
-## Coordinate transforms (five frames)
+## Coordinate transforms (basics)
 
 We work with five frames:
 
@@ -142,7 +136,7 @@ Hand_pose_H = X_VR→H · T_VR · X_T→Hand
 If the tracker marker aligns with the human axes but the hand is still “off,”
 you likely need to define `X_T→Hand` (tracker mounting offset).
 
-### Record a session of pose movement and send it to robot arm
+### (legacy) Record a session of pose movement and send it to robot arm
 
 #### Recording data on the windows PC using `utils/record_track.py`
 
@@ -151,62 +145,6 @@ In order to record a session of pose movement, run the following command after b
 ```
 python utils/record_track.py [duration = 30] [interval = 0.05]
 ```
-
-## Installing locally
-
-Recommended clean setup (inside a virtualenv):
-
-```
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
-pip install --upgrade pip setuptools wheel
-pip install -e .
-```
-
-This exposes two console scripts:
-
-- `tracker-test` — prints live xyz + quaternion for `tracker_1`.
-- `tcp-visualizer` — opens the 3D matplotlib viewer for tracker position.
-
-The program takes two optional arguments, the first argument is the duration of motion you want to record in seconds. The default value for duration is 30 seconds. The second argument is the time interval between every pose information in seconds. The shorter the interval, the more accurate the record data are. The default value for interval is 0.05 second.
-
-Once the program is executed, it will prompt you to hit enter. The recording starts as soon as you hit the enter key, and will finish when the time of duration elapses. Afterwards, the program will ask the name of file you would like to save(default is "test"). Then in the same directory, you should see a generated .obj file that contains all the recorded poses. A .png file will also be generated, which contains three graphs that shows the change of Cartesian Coordinate, change of Quaternion, and velocity, respectively.
-
-Here is a sample .png file that you may get:
-![test](https://user-images.githubusercontent.com/25497706/61661136-6b332b00-ac99-11e9-82f6-07827b5e8a3f.png)
-
-#### Translating the recorded motion to executable path on robot arm
-
-Once having the .obj file, you should transfer the .obj file to the ubuntu machine which runs Rosvita(either through email or flash drive). Then, in the Rosvita server, navigate to the folder where the script motion_track.py is located, and upload the .obj file to the same folder. In the command line of Rosvita, execute the following command(it is recommended first running the script in simulation mode):
-
-```
-python3 motion_track.py [name of the recorded data]
-```
-
-Then, you should be able to define a new path with with recorded data following the instructions on the README of [RobotControl GitHub repository](https://github.com/pgh245340802/RobotControl).
-
-## Notes
-- Check triad_openvr.py for all the possible data that you may get: get_pose_euler, get_pose_quaternion, get_velocity, get_angular_velocity, and get_pose_matrix.
-
-- To save the pose data and use it on a robot arm, we calculate the delta value (difference) between the beginning pose and the subsequent ones.
-
-- For the pose data to fully work on a robot arm, you also have to convert the coordinates from the ones in the VR world to the ones the robot arm is using.
-
-- Try to use quaternion for more stable orientation data. Euler angles, although easier to comprehend, can be very unstable and lead to problems such as Gimbal Lock.
-
-## Potential Improvements:
-
-As the summer approaches to an end, I have to leave the program as it is. However, the following improvements could be made to the program:
-
-1. Decrease the lag of real-time movement of robot arm. (For now, the program records the pose every 0.4 second, and then send the 10 saved poses in a list to robot arm. In order to improve it, my idea is to record the pose only when the difference between the current pose and the last recorded pose exceed a certain threshold.)
-
-2. In the graph of change of quaternions, there exists some very steep changes from positive value to negative value. Make the graph more smooth. (Since quaternion is unique up to sign, which means q = -q, the idea is to calculate the euclidean distance of two consecutive quaternions and compare that value with the euclidean distance after negating the second quaternion value. Then, plot the point with smaller euclidean distance)
-
-## Author
-
-* Tiansheng Sun
-
-* Guanghan Pan
 
 ## Acknowledgments
 
