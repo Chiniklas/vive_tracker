@@ -29,17 +29,29 @@
   <worldbody>
     <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 0" rgba="0.9 0.9 0.9 1" contype="1" conaffinity="1" group="1"/>
     <light name="dome_light" pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.1 0.1 0.1" directional="false"/>
-    <body name="hand_root" pos="0 0 0.3" quat="1 0 0 0">
-      <joint name="root_tx" type="slide" axis="1 0 0" range="-1 1"/>
-      <joint name="root_ty" type="slide" axis="0 1 0" range="-1 1"/>
-      <joint name="root_tz" type="slide" axis="0 0 1" range="-1 1"/>
-      <joint name="root_rx" type="hinge" axis="1 0 0" range="-3.14 3.14"/>
-      <joint name="root_ry" type="hinge" axis="0 1 0" range="-3.14 3.14"/>
-      <joint name="root_rz" type="hinge" axis="0 0 1" range="-3.14 3.14"/>
+    <body name="tracker_marker" mocap="true">
+      <geom name="tracker_marker_geom" type="sphere" size="0.01" rgba="1 0.2 0.2 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_axis_x" type="cylinder" size="0.002 0.03" pos="0.03 0 0" quat="0.70710678 0 0.70710678 0" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_axis_y" type="cylinder" size="0.002 0.03" pos="0 0.03 0" quat="0.70710678 -0.70710678 0 0" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_axis_z" type="cylinder" size="0.002 0.03" pos="0 0 0.03" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="human_frame" mocap="true">
+      <geom name="human_origin" type="sphere" size="0.008" rgba="1 0.8 0.2 1" contype="0" conaffinity="0"/>
+      <geom name="human_axis_x" type="cylinder" size="0.002 0.04" pos="0.04 0 0" quat="0.70710678 0 0.70710678 0" rgba="1 0.6 0 1" contype="0" conaffinity="0"/>
+      <geom name="human_axis_y" type="cylinder" size="0.002 0.04" pos="0 0.04 0" quat="0.70710678 -0.70710678 0 0" rgba="0 0.8 1 1" contype="0" conaffinity="0"/>
+      <geom name="human_axis_z" type="cylinder" size="0.002 0.04" pos="0 0 0.04" rgba="0.9 0.9 0 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="hand_mocap" mocap="true"/>
+    <geom name="axis_x" type="cylinder" size="0.005 0.05" pos="0.05 0 0" quat="0.70710678 0 0.70710678 0" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="axis_y" type="cylinder" size="0.005 0.05" pos="0 0.05 0" quat="0.70710678 -0.70710678 0 0" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+    <geom name="axis_z" type="cylinder" size="0.005 0.05" pos="0 0 0.05" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+    <body name="hand_base" pos="0 0 0.3">
+      <freejoint name="root_free"/>
 
       <geom name="base_root_marker" type="sphere" size="0.01" pos="0 0 0" rgba="0.2 0.6 0.9 1"/>
-      <geom pos="0 0 0" quat="0.707107 -0.707107 0 0" type="mesh" rgba="1 1 1 1" mesh="base_link"/>
-      <body name="Link3" pos="0.000285 -0.027269 0.1366" quat="-2.55162e-06 2.64228e-06 0.694658 0.71934">
+      <body name="hand_root" pos="0 0 0" quat="0.5 -0.5 -0.5 -0.5">
+        <geom pos="0 0 0" quat="0.707107 -0.707107 0 0" type="mesh" rgba="1 1 1 1" mesh="base_link"/>
+        <body name="Link3" pos="0.000285 -0.027269 0.1366" quat="-2.55162e-06 2.64228e-06 0.694658 0.71934">
         <inertial pos="0.0031774 0.017383 0.00090008" quat="0.491211 0.50867 -0.491172 0.508643" mass="0.0042403" diaginertia="6.9398e-07 6.62871e-07 2.10909e-07"/>
         <joint name="joint03" pos="0 0 0" axis="-0 -0 -1" range="0 2" actuatorfrcrange="-50 50"/>
         <geom type="mesh" rgba="1 1 1 1" mesh="Link3"/>
@@ -48,7 +60,7 @@
           <joint name="joint34" pos="0 0 0" axis="-0 -0 -1" range="0 1.7" actuatorfrcrange="-50 50"/>
           <geom type="mesh" rgba="1 1 1 1" mesh="Link4"/>
         </body>
-      </body>
+        </body>
       <body name="Link13" pos="0.000285 -0.00795 0.1371" quat="-2.59735e-06 2.59735e-06 0.707107 0.707107">
         <inertial pos="0.0030737 0.017402 0.00090013" quat="0.489693 0.510131 -0.489653 0.510105" mass="0.0042403" diaginertia="6.9397e-07 6.62865e-07 2.10915e-07"/>
         <joint name="joint013" pos="0 0 0" axis="0 0 -1" range="-2 2" actuatorfrcrange="-50 50"/>
@@ -99,9 +111,15 @@
           </body>
         </body>
       </body>
-  
+      </body>
     </body>
 </worldbody>
+
+  <equality>
+    <weld name="hand_mocap_weld" body1="hand_mocap" body2="hand_base"
+          relpose="0 0 0 1 0 0 0"
+          solref="0.01 1" solimp="0.9 0.95 0.001"/>
+  </equality>
 
   <contact>
     <exclude body1="hand_root" body2="Link3"/>
@@ -119,12 +137,6 @@
   </contact>
 
   <actuator>
-    <position name="hand_tx" joint="root_tx" ctrlrange="-1 1" kp="10" kv="3"/>
-    <position name="hand_ty" joint="root_ty" ctrlrange="-1 1" kp="10" kv="3"/>
-    <position name="hand_tz" joint="root_tz" ctrlrange="-1 1" kp="10" kv="3"/>
-    <position name="hand_rx" joint="root_rx" ctrlrange="-3.14 3.14" kp="5" kv="2"/>
-    <position name="hand_ry" joint="root_ry" ctrlrange="-3.14 3.14" kp="5" kv="2"/>
-    <position name="hand_rz" joint="root_rz" ctrlrange="-3.14 3.14" kp="5" kv="2"/>
     <position name="index_joint_0" joint="joint03" ctrlrange="0 1.2" kp="10" kv="2" ctrllimited="true"/>
     <position name="index_joint_1" joint="joint34" ctrlrange="0 1.7" kp="10" kv="2" ctrllimited="true"/>
     <position name="middle_joint_0" joint="joint013" ctrlrange="0 1.2" kp="10" kv="2" ctrllimited="true"/>
@@ -138,4 +150,9 @@
     <position name="thumb_joint_2" joint="joint4447" ctrlrange="0 0.5" kp="10" kv="2" ctrllimited="true"/>
     <position name="thumb_joint_3" joint="joint4748" ctrlrange="0 0.5" kp="10" kv="2" ctrllimited="true"/>
   </actuator>
+
+  <sensor>
+    <framepos name="tracker_pos" objtype="body" objname="tracker_marker"/>
+    <framequat name="tracker_quat" objtype="body" objname="tracker_marker"/>
+  </sensor>
 </mujoco>

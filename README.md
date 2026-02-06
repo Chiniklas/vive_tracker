@@ -78,6 +78,70 @@ As the script executes, you will see numbers updating at 250Hz. The first three 
 
 The coordinates of the VR world are set up like this: when facing towards the base station, in your front is the +z direction, above you is the +y direction, and to your left is the +x direction.
 
+## Coordinate frames (MuJoCo + Human)
+
+For the MuJoCo tests we use a robotics-style, right-handed human frame:
+
+- Origin: operator pelvis
+- +X: right
+- +Y: forward
+- +Z: up
+
+The MuJoCo scene includes a `human_frame` marker (RGB axis triad + small sphere) in
+`asset/inspirehand/handright9253_simplified.xml`. It is a `mocap` body so you can
+place it during calibration. By default it sits at the MuJoCo world origin.
+
+### Tracker calibration (human pelvis frame)
+
+Use `tests/test_wrist_tracking.py --calibrate` to compute a rigid transform from
+SteamVR space into the robotics human frame (origin at pelvis, +X right, +Y forward, +Z up).
+
+Run:
+
+```
+python tests/test_wrist_tracking.py --calibrate
+```
+
+Follow the prompts in order (return to pelvis origin each time):
+
+1) Pelvis origin, palm down, fingers forward → press Enter  
+2) Return to pelvis, then move +X (right) → press Enter  
+3) Return to pelvis, then move +Y (forward) → press Enter  
+4) Return to pelvis, then move +Z (up) → press Enter  
+5) Return to pelvis, rotate +X (roll, right-hand rule) → press Enter  
+6) Return to pelvis, rotate +Z (yaw, right-hand rule) → press Enter
+
+This saves `tests/tracker_calibration.json`. Subsequent runs apply it automatically.
+Steps 5–6 let the script auto-detect rotation sign flips and store them in the calibration.
+Use `--no-calib` to bypass the transform, or `--no-calib-rot` to bypass rotation alignment.
+
+## Coordinate transforms (five frames)
+
+We work with five frames:
+
+1) Human frame (H): pelvis origin, +X right, +Y forward, +Z up.  
+2) Hand frame (Hand): `hand_root` in MuJoCo (model-local).  
+3) VR base frame (VR): SteamVR tracking space.  
+4) VR tracker frame (T): tracker body frame (quaternion is defined in this frame).  
+5) MuJoCo world frame (MJ): MuJoCo scene/world frame.
+
+Target relationship: **H and MJ coincide** (same origin + axes). In this project,
+the human frame is the absolute reference, and the MuJoCo world is aligned to it.
+
+The tracker gives us `T_VR` (tracker pose in VR). We need two transforms:
+
+- `X_VR→H`: calibration transform from VR space into human frame (computed by calibration).
+- `X_T→Hand`: fixed tracker-to-hand mounting offset (depends on how the tracker is attached).
+
+Then the hand pose in the human/MuJoCo world frame is:
+
+```
+Hand_pose_H = X_VR→H · T_VR · X_T→Hand
+```
+
+If the tracker marker aligns with the human axes but the hand is still “off,”
+you likely need to define `X_T→Hand` (tracker mounting offset).
+
 ### Record a session of pose movement and send it to robot arm
 
 #### Recording data on the windows PC using `utils/record_track.py`
