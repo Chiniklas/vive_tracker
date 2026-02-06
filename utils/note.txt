@@ -1,0 +1,11 @@
+Batch simplify STL meshes with MeshLab (headless + software GL + snap-safe env):
+
+xvfb-run -a -s "-screen 0 1920x1080x24" env \
+PATH=/usr/bin:/bin HOME="$HOME" \
+LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu \
+LD_PRELOAD=/lib/x86_64-linux-gnu/libpthread.so.0 \
+QT_QPA_PLATFORM=offscreen \
+LIBGL_ALWAYS_SOFTWARE=1 \
+MESA_LOADER_DRIVER_OVERRIDE=llvmpipe \
+MESHLABSERVER=/usr/bin/meshlabserver \
+bash utils/batch_simplify_meshes.sh /home/chi/projects/SteamVR_Tracking/asset/tg2_inspirehand/body _low --inplace
