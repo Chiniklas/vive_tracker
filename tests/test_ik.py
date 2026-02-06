@@ -5,7 +5,7 @@ Usage:
 
 Notes:
   - Uses MuJoCo Jacobians (no external IK library).
-  - Position-only IK with damped least squares.
+  - Position + orientation IK with damped least squares.
 """
 
 from __future__ import annotations
@@ -48,6 +48,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tol", type=float, default=1e-4, help="Target position tolerance (m).")
     parser.add_argument("--damping", type=float, default=0.05, help="Damping (lambda) for DLS.")
     parser.add_argument("--step", type=float, default=1.0, help="Step size multiplier.")
+    parser.add_argument("--target-quat", type=float, nargs=4,
+                        help="Target orientation as w x y z (applied to all targets).")
+    parser.add_argument("--target-rpy", type=float, nargs=3,
+                        help="Target orientation as roll pitch yaw in radians (applied to all targets).")
+    parser.add_argument("--w-pos", type=float, default=1.0, help="Position error weight.")
+    parser.add_argument("--w-rot", type=float, default=0.5, help="Rotation error weight.")
     parser.add_argument("--show", action="store_true", help="Launch viewer after solving.")
     parser.add_argument("--hold-seconds", type=float, default=1.0,
                         help="Seconds to hold each target pose (viewer only).")
@@ -110,15 +116,64 @@ def set_ctrls(model: mujoco.MjModel, data: mujoco.MjData,
         data.ctrl[act_id] = value
 
 
+def quat_mul(a: Tuple[float, float, float, float],
+             b: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+    aw, ax, ay, az = a
+    bw, bx, by, bz = b
+    return (
+        aw * bw - ax * bx - ay * by - az * bz,
+        aw * bx + ax * bw + ay * bz - az * by,
+        aw * by - ax * bz + ay * bw + az * bx,
+        aw * bz + ax * by - ay * bx + az * bw,
+    )
+
+
+def quat_inv(q: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+    w, x, y, z = q
+    norm = w * w + x * x + y * y + z * z
+    if norm == 0:
+        return (1.0, 0.0, 0.0, 0.0)
+    return (w / norm, -x / norm, -y / norm, -z / norm)
+
+
+def quat_to_axis_angle(q: Tuple[float, float, float, float]) -> Tuple[float, float, float]:
+    w, x, y, z = q
+    if w < 0.0:
+        w, x, y, z = -w, -x, -y, -z
+    w = max(-1.0, min(1.0, w))
+    angle = 2.0 * math.acos(w)
+    s = math.sqrt(max(1.0 - w * w, 0.0))
+    if s < 1e-8:
+        return (angle, 0.0, 0.0)
+    return (x / s * angle, y / s * angle, z / s * angle)
+
+
+def rpy_to_quat(roll: float, pitch: float, yaw: float) -> Tuple[float, float, float, float]:
+    cr = math.cos(roll * 0.5)
+    sr = math.sin(roll * 0.5)
+    cp = math.cos(pitch * 0.5)
+    sp = math.sin(pitch * 0.5)
+    cy = math.cos(yaw * 0.5)
+    sy = math.sin(yaw * 0.5)
+    w = cr * cp * cy + sr * sp * sy
+    x = sr * cp * cy - cr * sp * sy
+    y = cr * sp * cy + sr * cp * sy
+    z = cr * cp * sy - sr * sp * cy
+    return (w, x, y, z)
+
+
 def solve_ik(model: mujoco.MjModel,
              data: mujoco.MjData,
              body_id: Optional[int],
              site_id: Optional[int],
              target: Tuple[float, float, float],
+             target_quat: Tuple[float, float, float, float],
              iters: int,
              tol: float,
              damping: float,
              step: float,
+             w_pos: float,
+             w_rot: float,
              joint_ids: List[int],
              dof_ids: List[int]) -> float:
     jacp = np.zeros((3, model.nv), dtype=np.float64)
@@ -128,13 +183,27 @@ def solve_ik(model: mujoco.MjModel,
     for _ in range(iters):
         mujoco.mj_forward(model, data)
         if site_id is not None:
-            cur = data.site_xpos[site_id]
+            cur_pos = data.site_xpos[site_id]
+            cur_xmat = data.site_xmat[site_id]
+            cur_rot = (
+                (float(cur_xmat[0]), float(cur_xmat[1]), float(cur_xmat[2])),
+                (float(cur_xmat[3]), float(cur_xmat[4]), float(cur_xmat[5])),
+                (float(cur_xmat[6]), float(cur_xmat[7]), float(cur_xmat[8])),
+            )
+            cur_quat = mat_to_quat(cur_rot)
         elif body_id is not None:
-            cur = data.xpos[body_id]
+            cur_pos = data.xpos[body_id]
+            cq = data.xquat[body_id]
+            cur_quat = (float(cq[0]), float(cq[1]), float(cq[2]), float(cq[3]))
         else:
             raise RuntimeError("No body or site specified for IK.")
-        err = (target[0] - cur[0], target[1] - cur[1], target[2] - cur[2])
-        err_norm = math.sqrt(err[0] ** 2 + err[1] ** 2 + err[2] ** 2)
+        pos_err = np.array([target[0] - cur_pos[0],
+                            target[1] - cur_pos[1],
+                            target[2] - cur_pos[2]], dtype=np.float64)
+        q_err = quat_mul(target_quat, quat_inv(cur_quat))
+        rot_err_vec = np.array(quat_to_axis_angle(q_err), dtype=np.float64)
+        err_vec = np.concatenate((pos_err * w_pos, rot_err_vec * w_rot))
+        err_norm = float(np.linalg.norm(pos_err))
         last_err = err_norm
         if err_norm < tol:
             break
@@ -144,48 +213,27 @@ def solve_ik(model: mujoco.MjModel,
         elif body_id is not None:
             mujoco.mj_jacBody(model, data, jacp, jacr, body_id)
 
-        # Build reduced J (3 x ndof)
         ndof = len(dof_ids)
-        j_reduced = [[float(jacp[r, d]) for d in dof_ids] for r in range(3)]
+        j_reduced = np.zeros((6, ndof), dtype=np.float64)
+        for k, d in enumerate(dof_ids):
+            j_reduced[0, k] = jacp[0, d] * w_pos
+            j_reduced[1, k] = jacp[1, d] * w_pos
+            j_reduced[2, k] = jacp[2, d] * w_pos
+            j_reduced[3, k] = jacr[0, d] * w_rot
+            j_reduced[4, k] = jacr[1, d] * w_rot
+            j_reduced[5, k] = jacr[2, d] * w_rot
 
-        # Damped least squares: dq = J^T (J J^T + lambda^2 I)^-1 * err
-        # Compute A = J J^T + lambda^2 I (3x3)
-        a00 = sum(j_reduced[0][k] * j_reduced[0][k] for k in range(ndof)) + damping * damping
-        a01 = sum(j_reduced[0][k] * j_reduced[1][k] for k in range(ndof))
-        a02 = sum(j_reduced[0][k] * j_reduced[2][k] for k in range(ndof))
-        a11 = sum(j_reduced[1][k] * j_reduced[1][k] for k in range(ndof)) + damping * damping
-        a12 = sum(j_reduced[1][k] * j_reduced[2][k] for k in range(ndof))
-        a22 = sum(j_reduced[2][k] * j_reduced[2][k] for k in range(ndof)) + damping * damping
-
-        # Invert 3x3 symmetric matrix
-        det = (
-            a00 * (a11 * a22 - a12 * a12)
-            - a01 * (a01 * a22 - a12 * a02)
-            + a02 * (a01 * a12 - a11 * a02)
-        )
-        if abs(det) < 1e-12:
+        a = j_reduced @ j_reduced.T + (damping * damping) * np.eye(6)
+        try:
+            v = np.linalg.solve(a, err_vec)
+        except np.linalg.LinAlgError:
             break
-        inv00 = (a11 * a22 - a12 * a12) / det
-        inv01 = (a02 * a12 - a01 * a22) / det
-        inv02 = (a01 * a12 - a02 * a11) / det
-        inv11 = (a00 * a22 - a02 * a02) / det
-        inv12 = (a01 * a02 - a00 * a12) / det
-        inv22 = (a00 * a11 - a01 * a01) / det
-
-        # v = A^-1 * err
-        v0 = inv00 * err[0] + inv01 * err[1] + inv02 * err[2]
-        v1 = inv01 * err[0] + inv11 * err[1] + inv12 * err[2]
-        v2 = inv02 * err[0] + inv12 * err[1] + inv22 * err[2]
-
-        # dq = J^T * v
-        dq = [0.0] * model.nv
-        for k, dof in enumerate(dof_ids):
-            dq[dof] = j_reduced[0][k] * v0 + j_reduced[1][k] * v1 + j_reduced[2][k] * v2
+        dq = j_reduced.T @ v
 
         # Apply step to qpos (only hinge joints).
-        for j, dof in zip(joint_ids, dof_ids):
+        for idx, j in enumerate(joint_ids):
             qadr = model.jnt_qposadr[j]
-            data.qpos[qadr] += step * dq[dof]
+            data.qpos[qadr] += step * float(dq[idx])
 
         clamp_joint_limits(model, data, joint_ids)
 
@@ -347,6 +395,17 @@ def main() -> Optional[int]:
                         next_print = time.time() + max(1e-6, 1.0 / args.print_hz)
 
             for idx, target in enumerate(targets, start=1):
+                if args.target_quat and args.target_rpy:
+                    raise ValueError("Use only one of --target-quat or --target-rpy.")
+                if args.target_quat:
+                    target_quat = (args.target_quat[0], args.target_quat[1],
+                                   args.target_quat[2], args.target_quat[3])
+                elif args.target_rpy:
+                    target_quat = rpy_to_quat(args.target_rpy[0], args.target_rpy[1], args.target_rpy[2])
+                else:
+                    mujoco.mj_forward(model, data)
+                    _, target_quat = get_tcp_pose(model, data, body_id, site_id)
+
                 start_qpos = data.qpos.copy()
                 err = solve_ik(
                     model,
@@ -354,10 +413,13 @@ def main() -> Optional[int]:
                     body_id=body_id,
                     site_id=site_id,
                     target=target,
+                    target_quat=target_quat,
                     iters=args.iters,
                     tol=args.tol,
                     damping=args.damping,
                     step=args.step,
+                    w_pos=args.w_pos,
+                    w_rot=args.w_rot,
                     joint_ids=joint_ids,
                     dof_ids=dof_ids,
                 )
@@ -366,8 +428,12 @@ def main() -> Optional[int]:
                 data.qvel[:] = 0.0
                 mujoco.mj_forward(model, data)
 
-                print(f"[{idx}/{len(targets)}] Target: {target}")
-                print(f"[{idx}/{len(targets)}] Final error: {err:.6f} m")
+                print(
+                    f"[{idx}/{len(targets)}] Target pos: ({target[0]: .4f}, {target[1]: .4f}, {target[2]: .4f}) | "
+                    f"Target quat: ({target_quat[0]: .4f}, {target_quat[1]: .4f}, "
+                    f"{target_quat[2]: .4f}, {target_quat[3]: .4f})"
+                )
+                print(f"[{idx}/{len(targets)}] Final pos error: {err:.6f} m")
 
                 # Smoothly move toward the target using actuator setpoints if available.
                 move_until = time.time() + max(0.0, args.move_seconds)
@@ -428,21 +494,39 @@ def main() -> Optional[int]:
                     next_print = time.time() + max(1e-6, 1.0 / args.print_hz)
     else:
         for idx, target in enumerate(targets, start=1):
+            if args.target_quat and args.target_rpy:
+                raise ValueError("Use only one of --target-quat or --target-rpy.")
+            if args.target_quat:
+                target_quat = (args.target_quat[0], args.target_quat[1],
+                               args.target_quat[2], args.target_quat[3])
+            elif args.target_rpy:
+                target_quat = rpy_to_quat(args.target_rpy[0], args.target_rpy[1], args.target_rpy[2])
+            else:
+                mujoco.mj_forward(model, data)
+                _, target_quat = get_tcp_pose(model, data, body_id, site_id)
+
             err = solve_ik(
                 model,
                 data,
                 body_id=body_id,
                 site_id=site_id,
                 target=target,
+                target_quat=target_quat,
                 iters=args.iters,
                 tol=args.tol,
                 damping=args.damping,
                 step=args.step,
+                w_pos=args.w_pos,
+                w_rot=args.w_rot,
                 joint_ids=joint_ids,
                 dof_ids=dof_ids,
             )
-            print(f"[{idx}/{len(targets)}] Target: {target}")
-            print(f"[{idx}/{len(targets)}] Final error: {err:.6f} m")
+            print(
+                f"[{idx}/{len(targets)}] Target pos: ({target[0]: .4f}, {target[1]: .4f}, {target[2]: .4f}) | "
+                f"Target quat: ({target_quat[0]: .4f}, {target_quat[1]: .4f}, "
+                f"{target_quat[2]: .4f}, {target_quat[3]: .4f})"
+            )
+            print(f"[{idx}/{len(targets)}] Final pos error: {err:.6f} m")
 
     return 0
 

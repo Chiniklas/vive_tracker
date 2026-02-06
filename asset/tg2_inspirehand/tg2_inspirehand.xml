@@ -51,6 +51,12 @@
     <geom name="axis_x" type="cylinder" size="0.005 0.05" pos="0.05 0 0" quat="0.70710678 0 0.70710678 0" rgba="1 0 0 1" contype="0" conaffinity="0"/>
     <geom name="axis_y" type="cylinder" size="0.005 0.05" pos="0 0.05 0" quat="0.70710678 -0.70710678 0 0" rgba="0 1 0 1" contype="0" conaffinity="0"/>
     <geom name="axis_z" type="cylinder" size="0.005 0.05" pos="0 0 0.05" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+    <body name="tracker_target" mocap="true">
+      <geom name="tracker_target_geom" type="sphere" size="0.01" rgba="1 0.2 0.2 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_target_axis_x" type="cylinder" size="0.002 0.03" pos="0.03 0 0" quat="0.70710678 0 0.70710678 0" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_target_axis_y" type="cylinder" size="0.002 0.03" pos="0 0.03 0" quat="0.70710678 -0.70710678 0 0" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+      <geom name="tracker_target_axis_z" type="cylinder" size="0.002 0.03" pos="0 0 0.03" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+    </body>
     <body name="model_root" pos="0 0 0.75" quat="0.70710678 0 0 0.70710678">
     <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="pelvis"/>
     <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="waist_yaw_link"/>
