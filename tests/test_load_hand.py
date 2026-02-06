@@ -1,4 +1,4 @@
-"""Quick loader for the Inspire hand MJCF in MuJoCo.
+"""Quick loader for the Inspire hand XML in MuJoCo.
 
 Usage:
     python tests/test_load_hand.py           # launches interactive viewer
@@ -23,20 +23,19 @@ except Exception as exc:  # pragma: no cover - import-time diagnostics for users
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-ASSET_PATH = REPO_ROOT / "asset" / "inspirehand" / "handright9253_fixed.mjcf"
+ASSET_PATH = REPO_ROOT / "asset" / "inspirehand" / "handright9253_simplified.xml"
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Load Inspire hand MJCF in MuJoCo.")
+    parser = argparse.ArgumentParser(description="Load Inspire hand XML in MuJoCo.")
     parser.add_argument("--headless", action="store_true", help="Run simulation without opening a viewer.")
     parser.add_argument("--steps", type=int, default=500, help="Steps to simulate (headless).")
-    parser.add_argument("--dt", type=float, default=0.002, help="Simulation timestep (seconds).")
     return parser.parse_args()
 
 
 def load_model(path: Path) -> mujoco.MjModel:
     if not path.is_file():
-        raise FileNotFoundError(f"MJCF not found at {path}")
+        raise FileNotFoundError(f"XML not found at {path}")
     return mujoco.MjModel.from_xml_path(str(path))
 
 
@@ -59,12 +58,9 @@ def run_viewer(model: mujoco.MjModel) -> None:
 def main() -> Optional[int]:
     args = parse_args()
     model = load_model(ASSET_PATH)
-    # Ensure the model's timestep matches requested dt if provided
-    if args.dt is not None:
-        model.opt.timestep = args.dt
 
     if args.headless:
-        run_headless(model, steps=args.steps, dt=args.dt)
+        run_headless(model, steps=args.steps, dt=model.opt.timestep)
     else:
         run_viewer(model)
     return 0
